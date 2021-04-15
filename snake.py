@@ -38,7 +38,8 @@ SERPENT = [[x,y],[x,y],[x,y],[x,y]]
 ########################
 # FONCTIONS
 
-def affichage_jeu():
+def ajout_pomme():
+    """Ajoute une pomme au hasard sur le terrain à chaque fois qu'elle est mangée et agrandit le serpent"""
     global pomme
     global x,y,pX,pY
     global SERPENT
@@ -49,18 +50,7 @@ def affichage_jeu():
             pY = rd.randint(CARRE, H-CARRE)
             #On ajoute un nouveau point au serpent
             SERPENT.append([0,0])
-    for i in range(CARRE):
-        canvas.create_rectangle(i*CARRE,0,(i+1)*CARRE,CARRE,
-         fill=COULEUR_PIERRE1, outline=COULEUR_PIERRE2, width=2)
-    for i in range(CARRE):
-        canvas.create_rectangle(0,i*CARRE,CARRE,(i+1)*CARRE,
-         fill=COULEUR_PIERRE1, outline=COULEUR_PIERRE2, width=2)
-    for i in range(CARRE):
-        canvas.create_rectangle(i*CARRE,H-CARRE,(i+1)*CARRE,H,
-         fill=COULEUR_PIERRE1, outline=COULEUR_PIERRE2, width=2)
-    for i in range(CARRE):
-        canvas.create_rectangle(L-CARRE,i*CARRE,L,(i+1)*CARRE,
-         fill=COULEUR_PIERRE1, outline=COULEUR_PIERRE2, width=2)
+    
  
 
 def newGame():
@@ -72,22 +62,27 @@ def newGame():
     
  
 def left(event):
+    """Le serpent se dirige vers la gauche"""
     global direction
     direction = "gauche"
  
 def right(event):
+    """Le serpent se dirige vers la droite"""
     global direction
     direction = "droite"
  
 def up(event):
+    """Le serpent se dirige vers le haut"""
     global direction
     direction = "haut"
  
 def down(event):
+    """Le serpent se dirige vers le bas"""
     global direction
     direction = "bas"
 
 def deplacement_serpent():
+    """Fixe le décors et permet de faire bouger le serpent"""
     global x,y,pX,pY
     global SERPENT
     canvas.delete("all")
@@ -101,7 +96,18 @@ def deplacement_serpent():
     tete_serpent = canvas.create_oval(SERPENT[0][0], SERPENT[0][1], SERPENT[0][0]+15, SERPENT[0][1]+15,outline="black", fill="blue")
     pomme = canvas.create_oval(pX, pY, pX+20, pY+20, outline='black', fill='red')
     
-
+    for i in range(CARRE):
+        canvas.create_rectangle(i*CARRE,0,(i+1)*CARRE,CARRE,
+         fill=COULEUR_PIERRE1, outline=COULEUR_PIERRE2, width=2)
+    for i in range(CARRE):
+        canvas.create_rectangle(0,i*CARRE,CARRE,(i+1)*CARRE,
+         fill=COULEUR_PIERRE1, outline=COULEUR_PIERRE2, width=2)
+    for i in range(CARRE):
+        canvas.create_rectangle(i*CARRE,H-CARRE,(i+1)*CARRE,H,
+         fill=COULEUR_PIERRE1, outline=COULEUR_PIERRE2, width=2)
+    for i in range(CARRE):
+        canvas.create_rectangle(L-CARRE,i*CARRE,L,(i+1)*CARRE,
+         fill=COULEUR_PIERRE1, outline=COULEUR_PIERRE2, width=2)
 
     if direction  == "gauche":
         SERPENT[0][0]  = SERPENT[0][0] - dx
@@ -120,7 +126,7 @@ def deplacement_serpent():
         if SERPENT[0][1] > HAUTEUR:
             racine.destroy()
     
-    affichage_jeu()
+    ajout_pomme()
     
     if flag != 0:
         racine.after(90, deplacement_serpent)
