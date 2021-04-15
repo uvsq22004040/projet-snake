@@ -18,18 +18,37 @@ import random as rd
  
 ########################
 # CONSTANTES
- 
-LARGEUR = 600
-HAUTEUR = 420
-CARRE = LARGEUR // 20
+
+L = 600
+H = 420
+CARRE = L // 20
+LARGEUR = L-CARRE
+HAUTEUR = H-CARRE
 COULEUR_PIERRE1 = "LightGoldenrod3"
 COULEUR_PIERRE2 = "LightGoldenrod4"
+x = L // 2
+y = H // 2
+dx, dy = 10, 10
+flag = 0
+direction = 'haut'
+pX = rd.randint(CARRE, LARGEUR)
+pY = rd.randint(CARRE, HAUTEUR)
+SERPENT = [[x,y],[x,y],[x,y],[x,y]]
  
 ########################
 # FONCTIONS
- 
-def mur():
-    """Crée un mur autour du canvas"""
+
+def affichage_jeu():
+    global pomme
+    global x,y,pX,pY
+    global SERPENT
+    if SERPENT[1][0]>pX-20 and  SERPENT[1][0]<pX+20:        
+        if SERPENT[1][1]>pY-20 and SERPENT[1][1]<pY+20:
+            #On remet une pomme au hasard
+            pX = rd.randint(CARRE, L-CARRE)
+            pY = rd.randint(CARRE, H-CARRE)
+            #On ajoute un nouveau point au serpent
+            SERPENT.append([0,0])
     for i in range(CARRE):
         canvas.create_rectangle(i*CARRE,0,(i+1)*CARRE,CARRE,
          fill=COULEUR_PIERRE1, outline=COULEUR_PIERRE2, width=2)
@@ -37,19 +56,76 @@ def mur():
         canvas.create_rectangle(0,i*CARRE,CARRE,(i+1)*CARRE,
          fill=COULEUR_PIERRE1, outline=COULEUR_PIERRE2, width=2)
     for i in range(CARRE):
-        canvas.create_rectangle(i*CARRE,HAUTEUR-CARRE,(i+1)*CARRE,HAUTEUR,
+        canvas.create_rectangle(i*CARRE,H-CARRE,(i+1)*CARRE,H,
          fill=COULEUR_PIERRE1, outline=COULEUR_PIERRE2, width=2)
     for i in range(CARRE):
-        canvas.create_rectangle(LARGEUR-CARRE,i*CARRE,LARGEUR,(i+1)*CARRE,
+        canvas.create_rectangle(L-CARRE,i*CARRE,L,(i+1)*CARRE,
          fill=COULEUR_PIERRE1, outline=COULEUR_PIERRE2, width=2)
  
+
+def newGame():
+    global pX,pY
+    global flag
+    if flag == 0:
+        flag = 1
+    deplacement_serpent()
+    
  
-def pomme():
-    """Place une pomme aléatoirement dans l'herbe"""
-    x = rd.randint(CARRE,LARGEUR-CARRE*2)
-    y = rd.randint(CARRE,HAUTEUR-CARRE*2)
-    canvas.create_oval(x,y,x+CARRE,y+CARRE, fill="red")
+def left(event):
+    global direction
+    direction = "gauche"
  
+def right(event):
+    global direction
+    direction = "droite"
+ 
+def up(event):
+    global direction
+    direction = "haut"
+ 
+def down(event):
+    global direction
+    direction = "bas"
+
+def deplacement_serpent():
+    global x,y,pX,pY
+    global SERPENT
+    canvas.delete("all")
+    i=len(SERPENT)-1
+    j=0
+    while i > 0:
+        SERPENT[i][0]=SERPENT[i-1][0]
+        SERPENT[i][1]=SERPENT[i-1][1]
+        corps_serpent = canvas.create_oval(SERPENT[i][0], SERPENT[i][1], SERPENT[i][0]+15, SERPENT[i][1]+15,outline='black', fill='blue')
+        i=i-1
+    tete_serpent = canvas.create_oval(SERPENT[0][0], SERPENT[0][1], SERPENT[0][0]+15, SERPENT[0][1]+15,outline="black", fill="blue")
+    pomme = canvas.create_oval(pX, pY, pX+20, pY+20, outline='black', fill='red')
+    
+
+
+    if direction  == "gauche":
+        SERPENT[0][0]  = SERPENT[0][0] - dx
+        if SERPENT[0][0] < CARRE:
+            racine.destroy()
+    elif direction  == "droite":
+        SERPENT[0][0]  = SERPENT[0][0] + dx
+        if SERPENT[0][0] > LARGEUR:
+            racine.destroy()
+    elif direction  == "haut":
+        SERPENT[0][1]  = SERPENT[0][1] - dy
+        if SERPENT[0][1] < CARRE:
+            racine.destroy()
+    elif direction  == "bas":
+        SERPENT[0][1]  = SERPENT[0][1] + dy
+        if SERPENT[0][1] > HAUTEUR:
+            racine.destroy()
+    
+    affichage_jeu()
+    
+    if flag != 0:
+        racine.after(90, deplacement_serpent)
+
+
  
 ########################
 # PROGRAMME PRINCIPAL
@@ -59,18 +135,30 @@ racine.title("Snake")
  
 # création des widgets
  
-canvas = tk.Canvas(racine, bg="chartreuse3", width=LARGEUR, height=HAUTEUR)
- 
- 
+canvas = tk.Canvas(racine, bg="chartreuse3", width=L, height=H)
+
+serpent_avant_lancement = canvas.create_oval(SERPENT[0][0], SERPENT[0][1], SERPENT[0][0]+15, SERPENT[0][1]+15, outline="black", fill="blue")
+pomme = canvas.create_oval(pX, pY, pX+20, pY+20, fill="red")
+
+b1 = tk.Button(racine, text='Nouvelle Partie', command=newGame, bg="white" , fg="black")
+b2 = tk.Button(racine, text="Quitter", command=racine.destroy, bg="white" , fg="black")
+
+
 # placement des widgets
  
-canvas.grid()
+canvas.grid(column=0)
+b1.grid(column=0,row=1)
+b2.grid(column=0,row=2)
+
  
 # liaison des événements
- 
-mur()
-pomme()
- 
+
+racine.bind('<KeyPress-Right>', right)
+racine.bind('<KeyPress-Left>', left)
+racine.bind('<KeyPress-Up>' , up)
+racine.bind('<KeyPress-Down>', down)
+
+
 # boucle principale
  
 racine.mainloop()
