@@ -34,6 +34,7 @@ direction = 'haut'
 pX = rd.randint(CARRE, LARGEUR)
 pY = rd.randint(CARRE, HAUTEUR)
 SERPENT = [[x,y],[x,y],[x,y],[x,y]]
+compteur = 0
  
 ########################
 # FONCTIONS
@@ -43,11 +44,14 @@ def ajout_pomme():
     global pomme
     global x,y,pX,pY
     global SERPENT
+    global compteur
     if SERPENT[1][0]>pX-40 and  SERPENT[1][0]<pX:        
         if SERPENT[1][1]>pY-40 and SERPENT[1][1]<pY:
             #On remet une pomme au hasard
-            pX = rd.randint(CARRE, LARGEUR-20)
-            pY = rd.randint(CARRE, HAUTEUR-20)
+            pX = rd.randint(CARRE+20, LARGEUR-20)
+            pY = rd.randint(CARRE+20, HAUTEUR-20)
+            compteur += 1
+            text_compteur["text"]=str(compteur)
             #On ajoute un nouveau point au serpent
             SERPENT.append([0,0])
     
@@ -61,22 +65,22 @@ def newGame():
     deplacement_serpent()
     
  
-def left(event):
+def gauche(event):
     """Le serpent se dirige vers la gauche"""
     global direction
     direction = "gauche"
  
-def right(event):
+def droite(event):
     """Le serpent se dirige vers la droite"""
     global direction
     direction = "droite"
  
-def up(event):
+def haut(event):
     """Le serpent se dirige vers le haut"""
     global direction
     direction = "haut"
  
-def down(event):
+def bas(event):
     """Le serpent se dirige vers le bas"""
     global direction
     direction = "bas"
@@ -125,6 +129,10 @@ def deplacement_serpent():
         SERPENT[0][1]  = SERPENT[0][1] + dy
         if SERPENT[0][1] > HAUTEUR:
             racine.destroy()
+
+    for i in range(1,4):
+        if SERPENT[0] == SERPENT[i]:
+            racine.destroy()
     
     ajout_pomme()
     
@@ -148,21 +156,22 @@ pomme = canvas.create_oval(pX, pY, pX+20, pY+20, fill="red")
 
 b1 = tk.Button(racine, text='Nouvelle Partie', command=newGame, bg="white" , fg="black")
 b2 = tk.Button(racine, text="Quitter", command=racine.destroy, bg="white" , fg="black")
-
+text_compteur = tk.Label(racine, text="Score: "+str(compteur), font=(20))
 
 # placement des widgets
  
 canvas.grid(column=0)
 b1.grid(column=0,row=1)
-b2.grid(column=0,row=2)
+b2.grid(column=0,row=3)
+text_compteur.grid(column=0,row=2)
 
  
 # liaison des événements
 
-racine.bind('<KeyPress-Right>', right)
-racine.bind('<KeyPress-Left>', left)
-racine.bind('<KeyPress-Up>' , up)
-racine.bind('<KeyPress-Down>', down)
+racine.bind('<KeyPress-Right>', droite)
+racine.bind('<KeyPress-Left>', gauche)
+racine.bind('<KeyPress-Up>' , haut)
+racine.bind('<KeyPress-Down>', bas)
 
 
 # boucle principale
