@@ -43,11 +43,11 @@ def ajout_pomme():
     global pomme
     global x,y,pX,pY
     global SERPENT
-    if SERPENT[1][0]>pX-20 and  SERPENT[1][0]<pX+20:        
-        if SERPENT[1][1]>pY-20 and SERPENT[1][1]<pY+20:
+    if SERPENT[1][0]>pX-40 and  SERPENT[1][0]<pX:        
+        if SERPENT[1][1]>pY-40 and SERPENT[1][1]<pY:
             #On remet une pomme au hasard
-            pX = rd.randint(CARRE, L-CARRE)
-            pY = rd.randint(CARRE, H-CARRE)
+            pX = rd.randint(CARRE, LARGEUR-20)
+            pY = rd.randint(CARRE, HAUTEUR-20)
             #On ajoute un nouveau point au serpent
             SERPENT.append([0,0])
     
@@ -94,7 +94,7 @@ def deplacement_serpent():
         corps_serpent = canvas.create_oval(SERPENT[i][0], SERPENT[i][1], SERPENT[i][0]+15, SERPENT[i][1]+15,outline='black', fill='blue')
         i=i-1
     tete_serpent = canvas.create_oval(SERPENT[0][0], SERPENT[0][1], SERPENT[0][0]+15, SERPENT[0][1]+15,outline="black", fill="blue")
-    pomme = canvas.create_oval(pX, pY, pX+20, pY+20, outline='black', fill='red')
+    pomme = canvas.create_oval(pX-20, pY-20, pX, pY, outline='black', fill='red')
     
     for i in range(CARRE):
         canvas.create_rectangle(i*CARRE,0,(i+1)*CARRE,CARRE,
